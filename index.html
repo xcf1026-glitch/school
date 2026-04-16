@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新北市三重區碧華國小 - 歲月流影</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&family=Noto+Serif+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================= 變數與基礎設定 ================= */
+        :root {
+            --color-bg: #050505;
+            --color-text: #e0e0e0;
+            --color-gold: #d4af37;
+            --font-serif: 'Noto Serif TC', serif;
+            --font-sans: 'Noto Sans TC', sans-serif;
+            --letterbox-height: 8vh;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            color: var(--color-gold);
+            font-weight: 700;
+        }
+
+        /* ================= 電影特效：黑邊與雜訊 ================= */
+        .letterbox-top, .letterbox-bottom {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: var(--letterbox-height);
+            background-color: #000;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .letterbox-top { top: 0; }
+        .letterbox-bottom { bottom: 0; }
+
+        .film-grain {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.15;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* ================= 佈局與區塊 ================= */
+        main {
+            padding-top: var(--letterbox-height);
+            padding-bottom: var(--letterbox-height);
+        }
+
+        /* 第一幕：全幅首頁 (震撼視覺) */
+        .hero {
+            position: relative;
+            height: calc(100vh - (var(--letterbox-height) * 2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: -15%; left: -10%; width: 120%; height: 130%;
+            background-image: url('https://github.com/xcf1026-glitch/school/raw/main/photo1.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.35;
+            z-index: -1;
+            /* 視差滾動由 JS 控制 translateY */
+        }
+
+        .hero-content {
+            z-index: 1;
+            padding: 20px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3.5rem, 8vw, 6rem);
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0px 4px 20px rgba(0,0,0,1), 0px 0px 10px rgba(212, 175, 55, 0.4);
+        }
+
+        .hero-content p {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            letter-spacing: 0.4em;
+            color: var(--color-gold);
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.9);
+            font-family: var(--font-serif);
+            margin-top: 10px;
+        }
+
+        /* 敘事章節：交錯排版 */
+        .section {
+            padding: 15vh 10%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 60px;
+            min-height: 80vh;
+        }
+
+        .section.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .text-content {
+            flex: 1;
+            max-width: 550px;
+        }
+
+        .text-content h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 30px;
+            position: relative;
+            letter-spacing: 0.1em;
+        }
+
+        .text-content h2::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: -12px;
+            width: 60px; height: 2px;
+            background-color: var(--color-gold);
+        }
+
+        .text-content p {
+            font-size: 1.15rem;
+            line-height: 2.2;
+            color: #c4c4c4;
+            text-align: justify;
+            font-weight: 300;
+        }
+
+        /* 畫框 / 拍立得樣式 */
+        .image-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .polaroid {
+            background-color: #f4f4f4;
+            padding: 18px 18px 70px 18px;
+            box-shadow: 15px 25px 50px rgba(0, 0, 0, 0.9), inset 0 0 8px rgba(0,0,0,0.05);
+            transform: rotate(-4deg);
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .section.reverse .polaroid {
+            transform: rotate(5deg);
+        }
+
+        .polaroid:hover {
+            transform: scale(1.03) rotate(0deg) !important;
+            z-index: 10;
+        }
+
+        .polaroid img {
+            width: 100%;
+            max-width: 480px;
+            height: auto;
+            display: block;
+            filter: grayscale(30%) sepia(20%) contrast(110%); /* 復古感 */
+            transition: filter 0.5s ease;
+        }
+        
+        .polaroid:hover img {
+            filter: grayscale(0%) sepia(0%) contrast(105%);
+        }
+
+        /* ================= 動畫與 JS 互動效果 ================= */
+        .reveal {
+            opacity: 0;
+            transform: translateY(80px);
+            transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                        transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.3s; }
+
+        /* ================= 頁尾 ================= */
+        footer {
+            padding: 80px 20px 40px;
+            text-align: center;
+            border-top: 1px solid rgba(212, 175, 55, 0.15);
+            background: linear-gradient(to top, #000 30%, transparent);
+            position: relative;
+            z-index: 1;
+        }
+
+        footer p {
+            font-family: var(--font-serif);
+            color: #777;
+            letter-spacing: 3px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        footer .links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        footer .links a {
+            color: var(--color-gold);
+            text-decoration: none;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            transition: all 0.4s ease;
+            position: relative;
+            padding-bottom: 5px;
+        }
+        
+        footer .links a::after {
+            content: '';
+            position: absolute;
+            width: 0; height: 1px;
+            bottom: 0; left: 50%;
+            background-color: var(--color-gold);
+            transition: all 0.4s ease;
+            transform: translateX(-50%);
+        }
+
+        footer .links a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+        }
+        
+        footer .links a:hover::after {
+            width: 100%;
+        }
+
+        /* ================= 響應式設計 (RWD) ================= */
+        @media (max-width: 960px) {
+            .section, .section.reverse {
+                flex-direction: column;
+                padding: 10vh 6%;
+                text-align: center;
+                gap: 40px;
+            }
+            .text-content {
+                max-width: 100%;
+            }
+            .text-content h2::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .polaroid {
+                transform: rotate(0) !important; /* 手機版取消旋轉以利閱讀 */
+                padding: 12px 12px 50px 12px;
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="letterbox-top"></div>
+    <div class="letterbox-bottom"></div>
+    <div class="film-grain"></div>
+
+    <main>
+        <section class="hero">
+            <div class="hero-bg js-parallax" data-speed="0.35"></div>
+            <div class="hero-content reveal active">
+                <h1>光影 ‧ 碧華</h1>
+                <p>凝結時光底片，刻畫不朽的青春史詩</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="text-content reveal delay-1">
+                <h2>晨光序曲</h2>
+                <p>坐落於三重的一方淨土，碧華國小不僅是一座校園，更是無數夢想萌芽的搖籃。每一片斑駁的紅磚，都低語著數十載的春風化雨；每一聲清脆的鐘響，都喚醒了世代交替間，那份對未知世界最純粹的渴望。這是一段關於成長的開場白，在晨曦微露中緩緩揭幕。</p>
+            </div>
+            <div class="image-content reveal delay-2">
+                <div class="polaroid">
+                    <img src="https://github.com/xcf1026-glitch/school/raw/main/photo2.jpg" alt="碧華國小校園景緻">
+                </div>
+            </div>
+        </section>
+
+        <section class="section reverse">
+            <div class="text-content reveal delay-1">
+                <h2>迴廊光影</h2>
+                <p>穿梭在光影交錯的長廊，陽光穿透樹梢灑落一地金黃，宛如老電影裡最溫暖的濾鏡。在這裡，知識不僅僅存在於書本的油墨之中，更深深刻寫在校園的每一寸角落。孩子們無憂的笑聲在微風裡輕輕迴盪，猶如這部青春紀事中最動人的背景配樂。</p>
+            </div>
+            <div class="image-content reveal delay-2">
+                <div class="polaroid">
+                    <img src="https://github.com/xcf1026-glitch/school/raw/main/photo3.jpg" alt="碧華國小迴廊光影">
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="text-content reveal delay-1">
+                <h2>青春協奏</h2>
+                <p>操場上的每一次奮力奔跑、跌倒後勇敢的起身，都是一部沒有預設腳本的真實長鏡頭。汗水與淚水交織，譜成了一首永不褪色的童年交響曲。碧華無聲地見證了生命中最無畏的瞬間，將這些看似平凡的日常，洗鍊為每個學子記憶底片裡無法取代的珍藏。</p>
+            </div>
+            <div class="image-content reveal delay-2">
+                <div class="polaroid">
+                    <img src="https://github.com/xcf1026-glitch/school/raw/main/photo4.jpg" alt="碧華國小操場活動">
+                </div>
+            </div>
+        </section>
+
+        <section class="section reverse">
+            <div class="text-content reveal delay-1">
+                <h2>燈火傳承</h2>
+                <p>時光如膠卷般不斷向前轉動，然而碧華的精神卻跨越了時間的長河，熠熠生輝。從這扇大門邁出的青澀腳步，終將走向更廣闊的世界；但這座充滿溫度的母校，永遠是學子們心中最安定的燈塔。未來的篇章正待續寫，而屬於碧華的故事，永不落幕。</p>
+            </div>
+            <div class="image-content reveal delay-2">
+                <div class="polaroid">
+                    <img src="https://github.com/xcf1026-glitch/school/raw/main/photo5.jpg" alt="碧華國小精神傳承">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>許宸福設計 | 網頁與作品及製作</p>
+        <div class="links">
+            <a href="https://www.bhes.ntpc.edu.tw/" target="_blank" rel="noopener noreferrer">官方網站</a>
+            <a href="https://www.facebook.com/pages/%E7%A2%A7%E8%8F%AF%E5%9C%8B%E5%B0%8F/172902606090128" target="_blank" rel="noopener noreferrer">FB網站</a>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            /* 1. 滾動揭示動畫 (Intersection Observer API) */
+            const revealElements = document.querySelectorAll('.reveal');
+            
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // 觸發後即取消觀察，讓元素保持顯示狀態
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                root: null,
+                threshold: 0.15, // 元素進入視窗 15% 時觸發
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            revealElements.forEach(el => revealObserver.observe(el));
+
+            /* 2. 視差滾動效果 (Parallax) */
+            const parallaxElements = document.querySelectorAll('.js-parallax');
+            
+            window.addEventListener('scroll', () => {
+                // 使用 requestAnimationFrame 優化滾動效能
+                window.requestAnimationFrame(() => {
+                    let scrollY = window.scrollY;
+                    parallaxElements.forEach(el => {
+                        let speed = parseFloat(el.getAttribute('data-speed')) || 0.3;
+                        // 根據滑鼠滾動將背景向下位移，產生視差錯覺
+                        el.style.transform = `translateY(${scrollY * speed}px)`;
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
